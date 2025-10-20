@@ -160,70 +160,61 @@ export default class TomSelect extends MicroPlugin(MicroEvent){
 		this.setupTemplates();
 
 
-		// Create all elements
-		const wrapper			= getDom('<div>');
-		const control			= getDom('<div>');
-		const dropdown			= this._render('dropdown');
-		const dropdown_content	= getDom(`<div role="listbox" tabindex="-1">`);
+		
+          // Create all elements
+          const wrapper = getDom('<div>');
+          const control = getDom('<div>');
+          const selected = getDom('<div>');
+          const dropdown = this._render('dropdown');
+          const dropdown_content = getDom(`<div role="listbox" tabindex="-1">`);
+          const classes = this.input.getAttribute('class') || '';
+          const inputMode = settings.mode;
+          var control_input;
+          addClasses(wrapper, settings.wrapperClass, classes, inputMode);
+          addClasses(control, settings.controlClass);
+          addClasses(selected, settings.selectedClass);
+          append(wrapper, control);
+          addClasses(dropdown, settings.dropdownClass, inputMode);
+          if (settings.copyClassesToDropdown) {
+              addClasses(dropdown, classes);
+          }
+          addClasses(dropdown_content, settings.dropdownContentClass);
+          append(dropdown, dropdown_content);
+          append(wrapper, selected);
+          getDom(settings.dropdownParent || wrapper).appendChild(dropdown);
 
-		const classes			= this.input.getAttribute('class') || '';
-		const inputMode			= settings.mode;
+          // default controlInput
+          if (isHtmlString(settings.controlInput)) {
+              control_input = getDom(settings.controlInput);
 
-		var control_input: HTMLInputElement;
+              // set attributes
+              var attrs = ['autocorrect', 'autocapitalize', 'autocomplete', 'spellcheck'];
+              iterate$1(attrs, attr => {
+                  if (input.getAttribute(attr)) {
+                      setAttr(control_input, {
+                          [attr]: input.getAttribute(attr)
+                      });
+                  }
+              });
+              control_input.tabIndex = -1;
+              control.appendChild(control_input);
+              this.focus_node = control_input;
 
-
-		addClasses( wrapper, settings.wrapperClass, classes, inputMode);
-
-
-		addClasses(control,settings.controlClass);
-		append( wrapper, control );
-
-
-		addClasses(dropdown, settings.dropdownClass, inputMode);
-		if( settings.copyClassesToDropdown ){
-			addClasses( dropdown, classes);
-		}
-
-
-		addClasses(dropdown_content, settings.dropdownContentClass);
-		append( dropdown, dropdown_content );
-
-		getDom( settings.dropdownParent || wrapper ).appendChild( dropdown );
-
-
-		// default controlInput
-		if( isHtmlString(settings.controlInput) ){
-			control_input		= getDom(settings.controlInput ) as HTMLInputElement;
-
-			// set attributes
-			var attrs = ['autocorrect','autocapitalize','autocomplete','spellcheck'];
-			iterate(attrs,(attr:string) => {
-				if( input.getAttribute(attr) ){
-					setAttr(control_input,{[attr]:input.getAttribute(attr)});
-				}
-			});
-
-			control_input.tabIndex = -1;
-			control.appendChild( control_input );
-			this.focus_node		= control_input;
-
-		// dom element
-		}else if( settings.controlInput ){
-			control_input		= getDom( settings.controlInput ) as HTMLInputElement;
-			this.focus_node		= control_input;
-
-		}else{
-			control_input		= getDom('<input/>') as HTMLInputElement;
-			this.focus_node		= control;
-		}
-
-		this.wrapper			= wrapper;
-		this.dropdown			= dropdown;
-		this.dropdown_content	= dropdown_content;
-		this.control 			= control;
-		this.control_input		= control_input;
-
-		this.setup();
+              // dom element
+          } else if (settings.controlInput) {
+              control_input = getDom(settings.controlInput);
+              this.focus_node = control_input;
+          } else {
+              control_input = getDom('<input/>');
+              this.focus_node = control;
+          }
+          this.wrapper = wrapper;
+          this.dropdown = dropdown;
+          this.dropdown_content = dropdown_content;
+          this.control = control;
+          this.control_input = control_input;
+          this.selected = selected;
+          this.setup();
 	}
 
 	/**
