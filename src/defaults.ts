@@ -45,6 +45,7 @@ export default {
 	mode: null,
 	wrapperClass: 'ts-wrapper',
 	controlClass: 'ts-control',
+        selectedClass: 'ts-selected',
 	dropdownClass: 'ts-dropdown',
 	dropdownContentClass: 'ts-dropdown-content',
 	itemClass: 'item',
